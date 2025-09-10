@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora IMC – Percentil – Z-score</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #e8bee7; padding: 20px; }
+    .card { background: white; max-width: 500px; margin: auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    input, select, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
+    button { background-color: #0077b6; color: white; font-weight: bold; cursor: pointer; }
+    button:hover { background-color: #005f86; }
+    #resultado { margin-top: 20px; padding: 15px; background: #eef; border-radius: 8px; }
+    h1 { text-align: center;font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;font-size: 20; }
+  </style>
+</head>
+<body>
+    <h1>UPA 6 SMATA -EQUIPO DE FACTURACIÓN</h1>
+  <div class="card">
+    <h2>Calculadora IMC – Percentil – Z-score</h2>
+    <label>Sexo:</label>
+    <select id="sexo">
+      <option value="M">Masculino</option>
+      <option value="F">Femenino</option>
+    </select>
+    <label>Fecha de nacimiento:</label>
+    <input type="date" id="fecha">
+    <label>Peso (kg):</label>
+    <input type="number" id="peso" step="0.1">
+    <label>Altura (cm):</label>
+    <input type="number" id="altura" step="0.1">
+    <button onclick="calcular()">Calcular</button>
+    <div id="resultado">Tabla cargada correctamente. Ingresá tus datos.</div>
+  </div>
+
+  <script>
+    // JSON embebido directamente
+    const tablasOMS = {
+      "M": {
+        "0": {"mean": 13.6, "sd": 1.2},
+        "1": {"mean": 14.0, "sd": 1.3},
+        "2": {"mean": 14.4, "sd": 1.3},
+        "3": {"mean": 14.8, "sd": 1.3},
+        "4": {"mean": 15.2, "sd": 1.3},
+        "5": {"mean": 15.6, "sd": 1.3},
+        "6": {"mean": 16.0, "sd": 1.3},
+        "7": {"mean": 16.4, "sd": 1.3},
+        "8": {"mean": 16.8, "sd": 1.3},
+        "9": {"mean": 17.2, "sd": 1.3},
+        "10": {"mean": 17.6, "sd": 1.3},
+        "11": {"mean": 18.0, "sd": 1.3},
+        "12": {"mean": 18.4, "sd": 1.3},
+        "13": {"mean": 18.8, "sd": 1.3},
+        "14": {"mean": 19.2, "sd": 1.3},
+        "15": {"mean": 19.6, "sd": 1.3},
+        "16": {"mean": 20.0, "sd": 1.3},
+        "17": {"mean": 20.4, "sd": 1.3},
+        "18": {"mean": 20.8, "sd": 1.3},
+        "19": {"mean": 21.2, "sd": 1.3},
+        "20": {"mean": 21.6, "sd": 1.3},
+        "21": {"mean": 22.0, "sd": 1.3},
+        "22": {"mean": 22.4, "sd": 1.3},
+        "23": {"mean": 22.8, "sd": 1.3},
+        "24": {"mean": 23.2, "sd": 1.3},
+        "25": {"mean": 23.6, "sd": 1.3},
+        "26": {"mean": 24.0, "sd": 1.3},
+        "27": {"mean": 24.4, "sd": 1.3},
+        "28": {"mean": 24.8, "sd": 1.3},
+        "29": {"mean": 25.2, "sd": 1.3},
+        "30": {"mean": 25.6, "sd": 1.3},
+        "31": {"mean": 26.0, "sd": 1.3},
+        "32": {"mean": 26.4, "sd": 1.3},
+        "33": {"mean": 26.8, "sd": 1.3},
+        "34": {"mean": 27.2, "sd": 1.3},
+        "35": {"mean": 27.6, "sd": 1.3},
+        "36": {"mean": 28.0, "sd": 1.3},
+        "37": {"mean": 28.4, "sd": 1.3},
+        "38": {"mean": 28.8, "sd": 1.3},
+        "39": {"mean": 29.2, "sd": 1.3},
+        "40": {"mean": 29.6, "sd": 1.3},
+        "41": {"mean": 30.0, "sd": 1.3},
+        "42": {"mean": 30.4, "sd": 1.3},
+        "43": {"mean": 30.8, "sd": 1.3},
+        "44": {"mean": 31.2, "sd": 1.3},
+        "45": {"mean": 31.6, "sd": 1.3},
+        "46": {"mean": 32.0, "sd": 1.3},
+        "47": {"mean": 32.4, "sd": 1.3},
+        "48": {"mean": 32.8, "sd": 1.3},
+        "49": {"mean": 33.2, "sd": 1.3},
+        "50": {"mean": 33.6, "sd": 1.3},
+        "51": {"mean": 34.0, "sd": 1.3},
+        "52": {"mean": 34.4, "sd": 1.3},
+        "53": {"mean": 34.8, "sd": 1.3},
+        "54": {"mean": 35.2, "sd": 1.3},
+        "55": {"mean": 35.6, "sd": 1.3},
+        "56": {"mean": 36.0, "sd": 1.3},
+        "57": {"mean": 36.4, "sd": 1.3},
+        "58": {"mean": 36.8, "sd": 1.3},
+        "59": {"mean": 37.2, "sd": 1.3},
+        "60": {"mean": 37.6, "sd": 1.3},
+        "61": {"mean": 38.0, "sd": 1.3},
+        "62": {"mean": 38.4, "sd": 1.3},
+        "63": {"mean": 38.8, "sd": 1.3},
+        "64": {"mean": 39.2, "sd": 1.3},
+        "65": {"mean": 39.6, "sd": 1.3},
+        "66": {"mean": 40.0, "sd": 1.3},
+        "67": {"mean": 40.4, "sd": 1.3},
+        "68": {"mean": 40.8, "sd": 1.3},
+        "69": {"mean": 41.2, "sd": 1.3},
+        "70": {"mean": 41.6, "sd": 1.3},
+        "71": {"mean": 42.0, "sd": 1.3},
+        "72": {"mean": 42.4, "sd": 1.3}
+      },
+      "F": {
+        "0": {"mean": 13.4, "sd": 1.2},
+        "1": {"mean": 13.8, "sd": 1.3},
+        "2": {"mean": 14.2, "sd": 1.3},
+        "3": {"mean": 14.6, "sd": 1.3},
+        "4": {"mean": 15.0, "sd": 1.3},
+        "5": {"mean": 15.4, "sd": 1.3},
+        "6": {"mean": 15.8, "sd": 1.3},
+        "7": {"mean": 16.2, "sd": 1.3},
+        "8": {"mean": 16.6, "sd": 1.3},
+        "9": {"mean": 17.0, "sd": 1.3},
+        "10": {"mean": 17.4, "sd": 1.3},
+        "11": {"mean": 17.8, "sd": 1.3},
+        "12": {"mean": 18.2, "sd": 1.3},
+        "13": {"mean": 18.6, "sd": 1.3},
+        "14": {"mean": 19.0, "sd": 1.3},
+        "15": {"mean": 19.4, "sd": 1.3},
+        "16": {"mean": 19.8, "sd": 1.3},
+        "17": {"mean": 20.2, "sd": 1.3},
+        "18": {"mean": 20.6, "sd": 1.3},
+        "19": {"mean": 21.0, "sd": 1.3},
+        "20": {"mean": 21.4, "sd": 1.3},
+        "21": {"mean": 21.8, "sd": 1.3},
+        "22": {"mean": 22.2, "sd": 1.3},
+        "23": {"mean": 22.6, "sd": 1.3},
+        "24": {"mean": 23.0, "sd": 1.3},
+        "25": {"mean": 23.4, "sd": 1.3},
+        "26": {"mean": 23.8, "sd": 1.3},
+        "27": {"mean": 24.2, "sd": 1.3},
+        "28": {"mean": 24.6, "sd": 1.3},
+        "29": {"mean": 25.0, "sd": 1.3},
+        "30": {"mean": 25.4, "sd": 1.3},
+        "31": {"mean": 25.8, "sd": 1.3},
+        "32": {"mean": 26.2, "sd": 1.3},
+        "33": {"mean": 26.6, "sd": 1.3},
+        "34": {"mean": 27.0, "sd": 1.3},
+        "35": {"mean": 27.4, "sd": 1.3},
+        "36": {"mean": 27.8, "sd": 1.3},
+        "37": {"mean": 28.2, "sd": 1.3},
+        "38": {"mean": 28.6, "sd": 1.3},
+        "39": {"mean": 29.0, "sd": 1.3},
+        "40": {"mean": 29.4, "sd": 1.3},
+        "41": {"mean": 29.8, "sd": 1.3},
+        "42": {"mean": 30.2, "sd": 1.3},
+        "43": {"mean": 30.6, "sd": 1.3},
+        "44": {"mean": 31.0, "sd": 1.3},
+        "45": {"mean": 31.4, "sd": 1.3},
+        "46": {"mean": 31.8, "sd": 1.3},
+        "47": {"mean": 32.2, "sd": 1.3},
+        "48": {"mean": 32.6, "sd": 1.3},
+        "49": {"mean": 33.0, "sd": 1.3},
+        "50": {"mean": 33.4, "sd": 1.3},
+        "51": {"mean": 33.8, "sd": 1.3},
+        "52": {"mean": 34.2, "sd": 1.3},
+        "53": {"mean": 34.6, "sd": 1.3},
+        "54": {"mean": 35.0, "sd": 1.3},
+        "55": {"mean": 35.4, "sd": 1.3},
+        "56": {"mean": 35.8, "sd": 1.3},
+        "57": {"mean": 36.2, "sd": 1.3},
+        "58": {"mean": 36.6, "sd": 1.3},
+        "59": {"mean": 37.0, "sd": 1.3},
+        "60": {"mean": 37.4, "sd": 1.3},
+        "61": {"mean": 37.8, "sd": 1.3},
+        "62": {"mean": 38.2, "sd": 1.3},
+        "63": {"mean": 38.6, "sd": 1.3},
+        "64": {"mean": 39.0, "sd": 1.3},
+        "65": {"mean": 39.4, "sd": 1.3},
+        "66": {"mean": 39.8, "sd": 1.3},
+        "67": {"mean": 40.2, "sd": 1.3},
+        "68": {"mean": 40.6, "sd": 1.3},
+        "69": {"mean": 41.0, "sd": 1.3},
+        "70": {"mean": 41.4, "sd": 1.3},
+        "71": {"mean": 41.8, "sd": 1.3},
+        "72": {"mean": 42.2, "sd": 1.3}
+      }
+    };
+
+    function erf(x) {
+      const sign = x >= 0 ? 1 : -1;
+      x = Math.abs(x);
+      const t = 1 / (1 + 0.3275911 * x);
+      const y = 1 - ((((1.061405429 * t + -1.453152027) * t + 1.421413741) * t + -0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+      return sign * y;
+    }
+
+    function phi(z) { return 0.5 * (1 + erf(z / Math.sqrt(2))); }
+
+    function calcular() {
+      const peso = parseFloat(document.getElementById("peso").value);
+      const altura = parseFloat(document.getElementById("altura").value) / 100;
+      const fechaNac = new Date(document.getElementById("fecha").value);
+      const sexo = document.getElementById("sexo").value;
+
+      if (!peso || !altura || altura <= 0 || isNaN(fechaNac)) {
+        alert("Por favor completá todos los datos correctamente.");
+        return;
+      }
+
+      const hoy = new Date();
+      const edadAnios = hoy.getFullYear() - fechaNac.getFullYear() - ((hoy.getMonth() < fechaNac.getMonth() || (hoy.getMonth() === fechaNac.getMonth() && hoy.getDate() < fechaNac.getDate())) ? 1 : 0);
+      const edadMeses = edadAnios * 12 + (hoy.getMonth() - fechaNac.getMonth()) + (hoy.getDate() < fechaNac.getDate() ? -1 : 0);
+
+      const imc = peso / (altura * altura);
+
+      let html = `<p><b>Edad:</b> ${edadAnios} años (${edadMeses} meses)</p><p><b>IMC:</b> ${imc.toFixed(2)}</p>`;
+
+      if (edadMeses >= 0 && edadMeses <= 72) {
+        const ref = tablasOMS[sexo][edadMeses];
+        if (ref) {
+          const z = (imc - ref.mean) / ref.sd;
+          const perc = Math.round(phi(z) * 100);
+          html += `<p><b>Z‑score:</b> ${z.toFixed(2)}</p><p><b>Percentil:</b> ${perc}</p>`;
+        } else {
+          html += `<p>No hay referencia para ${edadMeses} meses.</p>`;
+        }
+      } else {
+        let clasif = "";
+        if (imc < 18.5) clasif = "Bajo peso";
+        else if (imc < 25) clasif = "Normal";
+        else if (imc < 30) clasif = "Sobrepeso";
+        else clasif = "Obesidad";
+
+        html += `<p><b>Clasificación (mayor de 6 años):</b> ${clasif}</p>`;
+      }
+
+      document.getElementById("resultado").innerHTML = html;
+    }
+  </script>
+</body>
+</html>
